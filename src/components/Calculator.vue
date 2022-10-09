@@ -42,7 +42,7 @@ const calculator = computed(() => {
             label Balance
             input.form-control(v-model='data.balance')
           .form-group
-            label Target Profit %
+            label Target Profit (usdt)
             input.form-control(v-model='data.target_profit')
           .form-group
             label leverage (x)
