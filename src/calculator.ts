@@ -1,4 +1,4 @@
-export class Calculator {
+export default class Calculator {
   type: number;
   leverage: number;
   entry_price: number;

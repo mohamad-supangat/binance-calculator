@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import {
-  generate_qty_order,
-  generate_target_price,
-  generate_spread_price,
-} from "../bot_functions.ts";
+import Calculator from "../calculator.ts";
 
 const data = ref({
   type: "buy",
@@ -15,29 +11,14 @@ const data = ref({
   leverage: 10,
 });
 
-const qty = computed(() => {
-  return generate_qty_order({
-    order_amount: data.value.order_amount,
-    price: data.value.price,
-    leverage: data.value.leverage,
-  });
-});
-
-const spread_price = computed(() => {
-  return generate_spread_price({
-    spread: data.value.target_profit,
-    type: data.value.type,
-    price: data.value.price,
-  });
-});
-
-const target_price = computed(() => {
-  return generate_target_price({
-    target_profit: data.value.target_profit,
-    type: data.value.type,
-    price: data.value.price,
-    qty: qty.value,
-  });
+const calculator = computed(() => {
+  return new Calculator(
+    data.value.type == "sell" ? -1 : 1,
+    data.value.leverage,
+    data.value.price,
+    data.value.order_amount,
+    data.value.target_profit
+  );
 });
 </script>
 <template lang="pug">
@@ -72,17 +53,19 @@ const target_price = computed(() => {
         form
           .form-group
             label QTY
-            div {{ qty }}
-
-            <!---->
-          <!-- .form-group -->
-          <!--   label Spread Price -->
-          <!--   div {{ spread_price }} -->
-          <!---->
+            div {{ calculator.qty() }}
 
           .form-group
             label Target Price
-            div {{ target_price }}
+            div {{ calculator.exit_price() }}
+
+          .form-group
+            label PNL
+            div {{ calculator.pnl() }}
+
+          .form-group
+            label Initial Margin
+            div {{ calculator.inital_margin() }}
 
 
 </template>
